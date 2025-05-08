@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Aplicación Vulnerable</title>
+    <!-- Sin headers de seguridad -->
+</head>
+<body>
+    <h1>Login</h1>
+    <!-- Formulario vulnerable a CSRF - sin token -->
+    <form action="../backend/login.php" method="POST">
+        <input type="text" name="username" placeholder="Username">
+        <input type="password" name="password" placeholder="Password">
+        <button type="submit">Login</button>
+    </form>
+
+    <h1>Búsqueda de Productos</h1>
+    <!-- Formulario vulnerable a XSS -->
+    <input type="text" id="searchInput" placeholder="Buscar productos...">
+    <div id="searchResults"></div>
+
+    <script>
+        // Vulnerable a XSS basado en DOM
+        function search() {
+            const query = document.getElementById('searchInput').value;
+            fetch(`../backend/search.php?q=${query}`)
+                .then(response => response.json())
+                .then(data => {
+                    // Vulnerable a XSS - innerHTML sin sanitización
+                    document.getElementById('searchResults').innerHTML = 
+                        `<h3>Resultados para: ${query}</h3>` +
+                        data.map(product => `
+                            <div>
+                                <h4>${product.name}</h4>
+                                <p>${product.description}</p>
+                                <p>Precio: $${product.price}</p>
+                            </div>
+                        `).join('');
+                });
+        }
+
+        // Event listener vulnerable
+        document.getElementById('searchInput').addEventListener('input', search);
+
+        // Vulnerable a XSS via URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has('message')) {
+            // XSS via parámetro message
+            document.body.innerHTML += urlParams.get('message');
+        }
+    </script>
+</body>
+</html>
