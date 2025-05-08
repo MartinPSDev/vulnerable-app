@@ -26,3 +26,5 @@
 
 ## Propósito
 Este repositorio es solo para fines educativos y de demostración. Muestra ejemplos de código vulnerable común para ayudar a entender cómo NO se debe desarrollar una aplicación web.
+
+https://x.com/M4rt1n_0x1337
